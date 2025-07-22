@@ -12,10 +12,12 @@ local farmDepth = -50
 local voidY = -5000
 local targetNames = { "Coin", "EventOrb", "Candy", "Orb" }
 
+-- Очистка старого GUI
 if CoreGui:FindFirstChild("MM2FarmUI") then
     CoreGui.MM2FarmUI:Destroy()
 end
 
+-- Создание GUI
 local gui = Instance.new("ScreenGui", CoreGui)
 gui.Name = "MM2FarmUI"
 
@@ -27,6 +29,11 @@ button.TextColor3 = Color3.fromRGB(255, 255, 255)
 button.Font = Enum.Font.SourceSansBold
 button.TextSize = 18
 button.Text = "Включить автофарм"
+
+button.MouseButton1Click:Connect(function()
+    autofarmEnabled = not autofarmEnabled
+    button.Text = autofarmEnabled and "Выключить автофарм" or "Включить автофарм"
+end)
 
 local function makeInvisible()
     local char = LocalPlayer.Character
@@ -82,7 +89,6 @@ RunService.Heartbeat:Connect(function()
 
     makeInvisible()
 
-    -- Завершение раунда, если монет максимум
     if hasMaxCoins() then
         local murderer = findMurderer()
         if murderer and murderer.Character and murderer.Character:FindFirstChild("HumanoidRootPart") then
@@ -93,7 +99,6 @@ RunService.Heartbeat:Connect(function()
         end
     end
 
-    -- Поиск ближайшего шара
     local targets = findTargets()
     table.sort(targets, function(a, b)
         local h = LocalPlayer.Character.HumanoidRootPart.Position
@@ -106,10 +111,3 @@ RunService.Heartbeat:Connect(function()
         moveTo(targets[1].Position)
     end
 end)
-
-button.MouseButton1Click:Connect(function()
-    autofarmEnabled = not autofarmEnabled
-    button.Text = autofarmEnabled and "Выключить автофарм" or "Включить автофарм"
-end)
-
-print("✅ MM2 AutoFarm загружен.")
